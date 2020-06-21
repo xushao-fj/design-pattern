@@ -142,8 +142,97 @@ class ConcreteHandler2 extends Handler {
 >- 1 有多个对象可以处理一个请求, 哪个对象处理该请求由运行时刻自动确定. 
 >- 2 可动态指定一组对象处理请求, 或添加新的处理者.  
 >- 在不明确指定请求处理者的情况下, 向多个处理者中的一个提交请求.
- 
+---
+#### 策略模式  
+##### 1 策略模式的定义与特点  
+定义:  
+该模式定义了一系列算法, 并将每个算法封装起来, 使他们可以相互替换, 且算法的变化不会影响使用算法的用户. 策略模式属于对象行为模式, 它通过对算法进行封装, 吧使用算法的责任和算法的实现分割开来, 并委派给不同的对象对这些算法进行管理.
   
+优点:  
+- 1 多重条件语句不易维护, 而使用策略模式可以避免使用多重条件语句  
+- 2 提供了一系列的可供重用的算法族, 恰当使用继承可以把算法的公共代码转移到父类里面, 从而避免重复的代码  
+- 3 可以提供相同行为的不同实现, 客户可以根据不同时间或空间要求选择不同的实现.  
+- 4 提供了对开闭原则完美的支持, 可以在不修改源代码的情况下, 灵活增加新算法.
+
+缺点: 
+- 1 客户端必须理解所有策略算法的区别, 以便适时选择恰当的算法类  
+- 2 策略模式造成了很多策略类  
+
+#### 2 策略模式的结构与实现  
+- 模式的结构  
+>- 1 抽象策略类(Strategy): 定义了一个公共接口, 各种不同的方式实现了这个接口
+>- 2 具体策略类(Concrete Strategy): 实现了抽象策略定义的接口, 提供具体的算法实现.
+>- 3 执行类(Context): 持有一个策略类的引用, 最终给客户端调用.
+
+- 模式的实现  
+```java
+package com.xsm.design.pattern.strategy;
+
+/**
+ * @author xsm
+ * @Date 2020/6/21 16:20
+ */
+public class StrategyPattern {
+    public static void main(String[] args) {
+        Context c = new Context();
+        Strategy s = new ConcreteStrategyA();
+        c.setStrategy(s);
+        c.strategyMethod();
+        System.out.println("-----------------");
+        s = new ConcreteStrategyB();
+        c.setStrategy(s);
+        c.strategyMethod();
+    }
+}
+
+/** 抽象策略类*/
+interface Strategy {
+    /**
+     * 策略方法
+     */
+     void strategyMethod();
+}
+
+/** 具体策略类A*/
+class ConcreteStrategyA implements Strategy {
+    @Override
+    public void strategyMethod() {
+        System.out.println("具体策略A的策略方法被访问！");
+    }
+}
+
+/** 具体策略类B*/
+class ConcreteStrategyB implements Strategy {
+    @Override
+    public void strategyMethod() {
+        System.out.println("具体策略B的策略方法被访问！");
+    }
+}
+
+/** 环境类*/
+class Context {
+    private Strategy strategy;
+
+    public Strategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void strategyMethod() {
+        strategy.strategyMethod();
+    }
+}
+
+```
+![策略模式图](./doc/design-pattern-picture/策略模式.png) 
+
+
+- 实战  
+[短信服务-使用策略模式](http://note.youdao.com/noteshare?id=f8e82a3f178603c236be3982f6f882df&sub=8667D44FA63F47FF98C3F8E6833A1C7F)
+
 
 
  
