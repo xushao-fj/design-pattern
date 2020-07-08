@@ -338,6 +338,188 @@ class ConcreteObserver2 implements Observer {
     }
 }
 ```
+---
+### 模板方法模式
+#### 1 模式的定义和特点
+定义:  定义一个操作中的算法骨架, 而将算法的一些步骤延迟到子类中,
+是的子类可以不改变该算法结构的情况下重定义该算法的某些特定步骤. 是一种行为型模式
+
+优点:
+- 封装了不变部分, 扩展可变部分, 把认为是不变部分的算法封装到父类中实现,
+  而把可变部分算法由子类集成实现, 便于子类继续扩展.
+- 在父类中提取了公共的部分代码, 便于代码复用.
+- 部分方法是由子类实现的, 因此子类可以通过扩展方式增加响应的功能, 符合开闭原则.
+
+缺点:
+- 对每个不同的实现都需要定义一个子类, 这会导致类的个数增加, 系统更加庞大,
+  设计也更加抽象.
+- 父类中的抽象方法由子类实现, 子类执行的结果会影响父类的结果, 导致一种反向的控制结构,
+  提高了代码阅读的难度.
+
+#### 2. 模式的结构和实现
+1. 结构:
+- 抽象类: 负责给出一个算法的轮廓和骨架,
+  它由一个模板方法和若干个基本方法构成.方法定义如下:
+> - 模板方法: 定义了算法的骨架, 按某种顺序调用其包含的基本方法
+> - 基本方法: 是整个算法中的一个步骤, 包含一下几种类型:
+> > - 抽象方法: 在抽象类中声明, 由具体子类实现.
+> > - 具体方法: 在抽象类中已经实现, 在具体子类中可以继承或重写它.
+> > - 钩子放阿飞: 在抽象类中已经实现, 包括用于判断的逻辑方法和需要子类重写的空方法两种
+
+- 具体子类: 实现抽象类中锁定义的抽象方法和钩子方法, 他们是一个顶级逻辑的一个组成步骤
+
+2. 实现
+
+![策略模式图](./doc/design-pattern-picture/模板方法模式.jpg)
+```java
+public class TemplateMethodPattern {
+
+    public static void main(String[] args) {
+        AbstractClass tm = new ConcreteClass();
+        tm.TemplateMethod();
+    }
+}
+
+/** 抽象类 */
+abstract class AbstractClass {
+
+    /**
+     * 模板方法
+     */
+    public void TemplateMethod() {
+        SpecificMethod();
+        abstractMethod1();
+        abstractMethod2();
+    }
+
+    /**
+     * 具体方法
+     */
+    public void SpecificMethod() {
+        System.out.println("抽象类中的具体方法被调用...");
+    }
+
+    /**
+     * 抽象方法1
+     */
+    public abstract void abstractMethod1();
+
+    /**
+     * 抽象方法2
+     */
+    public abstract void abstractMethod2(); 
+}
+
+/** 具体子类*/
+class ConcreteClass extends AbstractClass {
+
+    @Override
+    public void abstractMethod1() {
+        System.out.println("抽象方法1的实现被调用...");
+    }
+
+    @Override
+    public void abstractMethod2() {
+        System.out.println("抽象方法2的实现被调用...");
+    }
+}
+```
+
+3. 项目中实战应用
+
+短信服务接入多个第三方短信平台的负载均衡实现
+```java
+public interface ILoadBalance {
+
+    /**
+     * 负载均衡策略接口
+     * @param smsPlatformInfoList 配置的短信平台
+     * @return 负载均衡选出的短信平台
+     */
+    String select(List<SmsPlatformInfo> smsPlatformInfoList);
+
+}
+```
+```java
+public abstract class BaseLoadBalance implements ILoadBalance{
+
+    /**
+     * 系统配置默认选用的短信平台, 在通过数据库查询不到可用的短信平台时使用
+     */
+    private String defaultPlatform;
+
+    @Override
+    public String select(List<SmsPlatformInfo> smsPlatformList){
+        if (CollectionUtils.isEmpty(smsPlatformList)){
+            log.error("无短信平台可负载均衡, 使用系统默认的短信平台: {}", defaultPlatform);
+            return defaultPlatform;
+        }
+
+        if (smsPlatformList.size() == 1){
+            return smsPlatformList.get(0).getPlatformName();
+        }
+        return doSelect(smsPlatformList);
+    }
+
+    /**
+     * 提供给子类实现不同负载均衡算法
+     * @param smsPlatformList 所有配置的短信平台
+     * @return 负载均衡选出的短信平台名称
+     */
+    protected abstract String doSelect(List<SmsPlatformInfo> smsPlatformList);
+}
+```
+```java
+/**
+ * @author xsm
+ * @date 2019/9/7 16:06
+ * 权重随机负载均衡策略实现
+ */
+@Component(value = LoadBalance.RANDOM_LOAD_BALANCE)
+@Slf4j
+public class RandomLoadBalanceImpl extends BaseLoadBalance {
+
+    private final Random random = new Random();
+
+    @Override
+    protected String doSelect(List<SmsPlatformInfo> smsPlatformInfoList) {
+        // 总个数
+        int length = smsPlatformInfoList.size();
+        int totalWeight = 0;
+        // 是否所有权重相同
+        boolean sameWeight = true;
+        for (int i = 0; i < length; i ++){
+            int weight = smsPlatformInfoList.get(i).getWeight();
+            totalWeight += weight;
+            // 判断是否所有短信平台的权重都一致
+            if (sameWeight && i > 0 && !Objects.equals(weight, smsPlatformInfoList.get(i - 1).getWeight())){
+                sameWeight = false;
+            }
+        }
+        // 如果所有短信平台配置的权重不同, 则进行权重随机
+        if (!sameWeight && totalWeight > 0){
+            int randomPos = random.nextInt(totalWeight);
+            for (SmsPlatformInfo smsPlatformInfo : smsPlatformInfoList) {
+                int weight = smsPlatformInfo.getWeight();
+                randomPos = randomPos - weight;
+                if (randomPos < 0) {
+                    return smsPlatformInfo.getPlatformName();
+                }
+            }
+        }
+        // 如果权重相同或权重为0, 则均等随机
+        return smsPlatformInfoList.get(random.nextInt(length)).getPlatformName();
+    }
+
+}
+```
+
+
+
+
+
+
+
 
 
  
