@@ -5,7 +5,7 @@ GOF23种设计模式的学习, 实践
 ## 目录
 
 - [创建型模式](#创建型模式)
-  - [单例模式]()
+  - [单例模式](#单例模式)
   - [原型模式]()
   - [工厂方法模式]()
   - [抽象工厂模式]()
@@ -36,6 +36,57 @@ GOF23种设计模式的学习, 实践
 ---
 
 ## 创建型模式
+
+### 单例模式
+
+定义: 指一个类只有一个实例, 且该类能自行创建这个实例的一种模式
+
+
+实现
+
+```java
+/** 懒汉式单例 DCL双重锁模式*/
+public class LazySingleton {
+    
+    /** 定义单例对象, 类加载并不作初始化操作*/
+    private static volatile LazySingleton instance = null;
+    
+    /** 私有化构造器, 防止 new 对象*/
+    private LazySingleton(){}
+    
+    public static LazySingleton getInstance(){
+        if (instance == null) {
+            // 加锁
+            synchronized (LazySingleton.class) {
+                if (instance == null) {
+                    instance = new LazySingleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+```
+
+```java
+/** 饿汉式单例, 类一旦加载就创建一个单例*/
+public class HungrySingleton {
+    
+    private static final HungrySingleton instance = new HungrySingleton();
+    
+    private HungrySingleton(){}
+    
+    public static HungrySingleton getInstance(){
+        return instance;
+    }
+
+}
+```
+
+
+
+
+
 
 ## 结构型模式
 
