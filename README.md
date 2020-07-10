@@ -112,7 +112,7 @@ BeanUtil进行对象拷贝操作
 - 2 真实主题类(Real Subject): 实现了抽象主题中的具体业务, 是代理对象所代表的真实对象, 是最终引用的对象
 - 3 代理类(Proxy): 提供了与真实主题相同的接口, 其内部含有对真实主题的引用, 它可以访问, 控制或扩展真实主题的功能
 
-![代理模式结构图](./doc/design-pattern-picture/proxy.png)
+![代理模式结构图](http://qd8fe0hd1.bkt.clouddn.com/proxy.png)
 
 #### 3. 代理模式的应用场景
 - 远程代理: 为了隐藏目标对象存在于不同地址空间的事实, 方便客户端访问. ex: 用户申请某些网盘空间时, 会在用户的文件系统中建立一个虚拟的硬盘, 用户访问虚拟硬盘时实际访问的是网盘空间.
@@ -146,7 +146,7 @@ BeanUtil进行对象拷贝操作
 实现:
 - 类适配器模式
 
-![类适配器模式](./doc/design-pattern-picture/类适配器结构图.png)
+![类适配器模式](http://qd8fe0hd1.bkt.clouddn.com/%E7%B1%BB%E9%80%82%E9%85%8D%E5%99%A8%E7%BB%93%E6%9E%84%E5%9B%BE.png)
 
 ```java
 package com.xsm.design.pattern;
@@ -196,7 +196,7 @@ public class ClassAdapterTest {
 
 - 对象适配器模式
 
-![类适配器模式](./doc/design-pattern-picture/对象适配器结构图.png)
+![类适配器模式](http://qd8fe0hd1.bkt.clouddn.com/%E5%AF%B9%E8%B1%A1%E9%80%82%E9%85%8D%E5%99%A8%E7%BB%93%E6%9E%84%E5%9B%BE.png)
 
 ```java
 //目标接口
@@ -260,8 +260,8 @@ public class ClassAdapterTest
 - 模式的结构  
 >- 抽象处理者(Handler): 定义一个处理请求的接口, 包含抽象处理方法和一个后继连接.  
 >- 具体处理者(Concrete Handler): 实现抽象处理者的处理方法, 判断能否处理本次请求, 如果可以处理请求则处理, 否则将该请求转给它的后继者.  
-![责任链结构图](./doc/design-pattern-picture/责任链1.png)  
-![责任链结构图](./doc/design-pattern-picture/责任链图2.png) 
+![责任链结构图](http://qd8fe0hd1.bkt.clouddn.com/%E8%B4%A3%E4%BB%BB%E9%93%BE1.png)  
+![责任链结构图](http://qd8fe0hd1.bkt.clouddn.com/%E8%B4%A3%E4%BB%BB%E9%93%BE%E5%9B%BE2.png)
 - 模式的实现  
 ```java
 package com.xsm.design.pattern.chain.responsibility;
@@ -439,7 +439,7 @@ class Context {
 }
 
 ```
-![策略模式图](./doc/design-pattern-picture/策略模式.png) 
+![策略模式图](http://qd8fe0hd1.bkt.clouddn.com/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F.png)
 
 
 - 实战  
@@ -464,7 +464,7 @@ class Context {
 >- 3 抽象观察者(Observer): 是一个抽象类或接口, 它包含了一个更新自己的抽象方法, 当接到具体主题的更改通知时被调用.  
 >- 4 具体观察者(Concrete Observer): 实现抽象观察者中定义的抽象方法, 以便在得到目标的更改通知时更新自身状态.
 
-![策略模式图](./doc/design-pattern-picture/观察者.png) 
+![策略模式图](http://qd8fe0hd1.bkt.clouddn.com/%E8%A7%82%E5%AF%9F%E8%80%85.png)
 
 - 实现
 ```java
@@ -582,7 +582,7 @@ class ConcreteObserver2 implements Observer {
 
 2. 实现
 
-![策略模式图](./doc/design-pattern-picture/模板方法模式.jpg)
+![策略模式图](http://qd8fe0hd1.bkt.clouddn.com/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F.jpg)
 ```java
 public class TemplateMethodPattern {
 
