@@ -13,7 +13,7 @@ GOF23种设计模式的学习, 实践
 
 - [结构型模式](#结构型模式)
   - [代理模式](#代理模式)
-  - [适配器模式]()
+  - [适配器模式](#适配器模式)
   - [桥接模式]()
   - [装饰模式]()
   - [外观模式]()
@@ -121,6 +121,120 @@ BeanUtil进行对象拷贝操作
 - Spring中的应用: `AOP`动态代理
 
 ---
+### 适配器模式
+#### 1. 适配器模式定义与特点
+定义: 将一个类的接口转换成客户希望的另外一个接口,
+使得原本有与接口不兼容而不能一起工作的那些类能一起工作.
+适配器模式分为类结构模式和对象结构型模式两种, 前者类之间的耦合度比后者高.
+
+优点:
+- 客户端通过适配器可以透明的调用目标接口
+- 复用了现存的类, 不需要修改原有代码而重用现有的适配者类
+- 将目标类和适配者类解耦, 解决了目标类和适配类接口不一致的问题.
+
+缺点:
+- 对类适配器来说, 更换适配器的实现过程比较复杂
+
+#### 2. 模式的结构与实现
+
+结构:
+- 目标接口: 当前系统业务所期待的接口, 可以是抽象类或接口
+- 适配者类: 它是被访问和适配的现存组件库中的组件接口
+- 适配器类: 它是一个转换器, 通过继承或引用适配者对象, 把适配者接口转换成目标接口,
+  让客户按目标接口的格式访问适配者.
+
+实现:
+- 类适配器模式
+
+![类适配器模式](./doc/design-pattern-picture/类适配器结构图.png)
+
+```java
+package com.xsm.design.pattern;
+
+/**
+ * @author xsm
+ * @date 2020/07/10
+ * @description
+ */
+/** 目标接口*/
+interface Target {
+
+    /**
+     * 目标接口方法
+     */
+    void request();
+}
+
+/** 适配者*/
+class Adaptee {
+    public void specificRequest(){
+        System.out.println("适配者中的业务代码被调用!");
+    }
+}
+
+/** 类适配器*/
+class ClassAdapter extends Adaptee implements Target {
+
+    @Override
+    public void request() {
+        specificRequest();
+    }
+}
+
+/** 客户端*/
+public class ClassAdapterTest {
+
+    public static void main(String[] args) {
+        System.out.println("类适配器模式测试");
+        Target target = new ClassAdapter();
+        target.request();
+    }
+
+}
+
+```
+
+- 对象适配器模式
+
+![类适配器模式](./doc/design-pattern-picture/对象适配器结构图.png)
+
+```java
+//目标接口
+interface Target
+{
+    public void request();
+}
+//适配者接口
+class Adaptee
+{
+    public void specificRequest()
+    {       
+        System.out.println("适配者中的业务代码被调用！");
+    }
+}
+//类适配器类
+class ClassAdapter extends Adaptee implements Target
+{
+    public void request()
+    {
+        specificRequest();
+    }
+}
+//客户端代码
+public class ClassAdapterTest
+{
+    public static void main(String[] args)
+    {
+        System.out.println("类适配器模式测试：");
+        Target target = new ClassAdapter();
+        target.request();
+    }
+}
+```
+
+
+
+
 
 ## 行为型模式
 
