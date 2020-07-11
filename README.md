@@ -14,7 +14,7 @@ GOF23种设计模式的学习, 实践
 - [结构型模式](#结构型模式)
   - [代理模式](#代理模式)
   - [适配器模式](#适配器模式)
-  - [桥接模式]()
+  - [桥接模式](#桥接模式)
   - [装饰模式]()
   - [外观模式]()
   - [享元模式]()
@@ -193,7 +193,6 @@ public class ClassAdapterTest {
 }
 
 ```
-
 - 对象适配器模式
 
 ![类适配器模式](http://qd8fe0hd1.bkt.clouddn.com/%E5%AF%B9%E8%B1%A1%E9%80%82%E9%85%8D%E5%99%A8%E7%BB%93%E6%9E%84%E5%9B%BE.png)
@@ -232,9 +231,80 @@ public class ClassAdapterTest
 }
 ```
 
+### 桥接模式
+##### 1. 桥接模式的定义与特点  
+定义:  
+将抽象与实现分离, 使它们可以独立变化. 它是用组合关系代替继承关系来实现, 从而降低了抽象和实现这两个可变唯独的耦合度.  
+优点:  
+- 由于抽象与实现分离,所以扩展能力强
+- 其实现细节对客户端透明  
 
+缺点:  
+由于聚合关系建立在抽象层,要求开发者针对抽象化进行设计与编程,这增加了系统的理解与设计难度  
 
+##### 2. 桥接模式的结构与实现  
+- 模式的结构  
+>- 抽象化角色: 定义抽象类,并包含一个对实现化对象的引用
+>- 扩展抽象化角色: 是抽象化角色的子类,实现父类中的业务方法, 并通过组合关系实现化角色中的业务方法
+>- 实现化角色: 定义实现化角色的结构,供扩展抽象化角色调用
+>- 具体实现化角色: 给出实现化角色接口的具体实现  
 
+![类适配器模式](./doc/design-pattern-picture/桥接模式结构图.png)
+- 实现  
+```java
+public class BridgeTest {
+    public static void main(String[] args) {
+        Implementor impl = new ConcreteImplementorA();
+        Abstraction abs = new RefinedAbstraction(impl);
+        abs.Operation();
+    }
+}
+
+/** 实现化角色*/
+interface Implementor {
+    void OperationImpl();
+}
+
+/** 具体实现化角色*/
+class ConcreteImplementorA implements Implementor {
+
+    @Override
+    public void OperationImpl() {
+        System.out.println("具体实现化(Concrete Implementor)角色被访问");
+    }
+}
+
+/** 抽象化角色*/
+abstract class Abstraction {
+
+    protected Implementor impl;
+
+    public Abstraction(Implementor impl) {
+        this.impl = impl;
+    }
+
+    public abstract void Operation();
+}
+
+/** 扩展抽象化角色*/
+class RefinedAbstraction extends Abstraction {
+
+    public RefinedAbstraction(Implementor impl) {
+        super(impl);
+    }
+
+    @Override
+    public void Operation() {
+        System.out.println("扩展抽象化(Refined Abstraction)角色被访问");
+        impl.OperationImpl();
+    }
+}
+```  
+
+- 桥接模式的应用场景  
+>- 当一个类存在两个独立变化的维度,且这两个维度都需要进行扩展时.
+>- 当一个系统不希望使用继承或因为多层次继承导致了系统类的个数急剧增加时.
+>- 当一个系统需要在构件的抽象化角色和具体化角色之间增加更多的灵活性时.
 
 ## 行为型模式
 
