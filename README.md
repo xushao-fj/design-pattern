@@ -15,7 +15,7 @@ GOF23种设计模式的学习, 实践
   - [代理模式](#代理模式)
   - [适配器模式](#适配器模式)
   - [桥接模式](#桥接模式)
-  - [装饰模式]()
+  - [装饰模式](#装饰模式)
   - [外观模式]()
   - [享元模式]()
   - [组合模式]()
@@ -305,6 +305,120 @@ class RefinedAbstraction extends Abstraction {
 >- 当一个类存在两个独立变化的维度,且这两个维度都需要进行扩展时.
 >- 当一个系统不希望使用继承或因为多层次继承导致了系统类的个数急剧增加时.
 >- 当一个系统需要在构件的抽象化角色和具体化角色之间增加更多的灵活性时.
+
+### 装饰模式  
+#### 1. 装饰模式的定义与特点  
+定义:  
+指在不改变现有对象结构的情况下, 动态地给该对象增加一些职责(即增加额外功能)的模式.  
+
+优点: 
+- 采用装饰模式扩展对象的功能比采用继承方式更加灵活
+- 可以设计出多个不同的具体装饰类,创造出多个不同行为的组合  
+
+缺点:  
+- 装饰模式增加了许多子类,如果过度使用会使程序变得很复杂  
+
+#### 2. 装饰模式的结构与实现  
+通常情况下, 扩展一个类的功能会使用继承方式来实现.但继承具有静态特征, 耦合度高,并且随着扩展功能的增多,子类会很膨胀.如果使用组合关系来创建一个包装对象(即装饰对象)来包裹真实对象,并在保持真实对象的类结构不变的前提下,为其提供额外的功能,这就是装饰模式的目标.  
+
+- 结构  
+>- 抽象构件: 定义一个抽象接口以规范准备接收附加责任的对象.
+>- 具体构件: 实现抽象构件,通过装饰角色为其添加一些职责.
+>- 抽象装饰: 继承抽象构件,并包含具体构件的实例,可以通过其子类扩展具体构件的功能.
+>- 具体装饰: 实现抽象装饰的相关方法,并给具体构件对象添加附加的责任.  
+
+![装饰模式](./doc/design-pattern-picture/装饰模式结构图.png)  
+
+- 实现  
+
+```java
+
+package com.xsm.design.pattern.decorator;
+
+/**
+ * @author xsm
+ * @Date 2020/7/12 15:05
+ * 装饰模式
+ */
+public class DecoratorPattern {
+    public static void main(String[] args) {
+        Component p = new ConcreteComponent();
+        p.operation();
+        System.out.println("---------------------------------");
+        Component d = new ConcreteDecorator(p);
+        d.operation();
+    }
+}
+
+/**
+ * 抽象构件角色
+ */
+interface Component {
+    void operation();
+}
+
+/**
+ * 具体构件角色
+ */
+class ConcreteComponent implements Component {
+
+    public ConcreteComponent() {
+        System.out.println("创建具体构件角色");
+    }
+
+    @Override
+    public void operation() {
+        System.out.println("调用具体构件角色的方法operation()");
+    }
+}
+
+/**
+ * 抽象装饰角色
+ */
+class Decorator implements Component {
+    private Component component;
+
+    public Decorator(Component component) {
+        this.component = component;
+    }
+
+    @Override
+    public void operation() {
+        component.operation();
+    }
+}
+
+/**
+ * 具体装饰角色
+ */
+class ConcreteDecorator extends Decorator {
+
+    public ConcreteDecorator(Component component) {
+        super(component);
+    }
+
+    @Override
+    public void operation() {
+        super.operation();
+        addedFunction();
+    }
+
+    /**
+     * 需要扩展的功能
+     */
+    public void addedFunction() {
+        System.out.println("为具体构件角色增加额外的功能addedFunction");
+    }
+}
+```
+
+- 装饰模式的应用场景  
+
+>- 当需要给一个现有类添加附加职责,而又不能采用生成子类的方法进行扩充时. ex: 该类被隐藏或者该类是终极类或者采用继承方式会产生大量的子类  
+>- 当需要通过对现有的一组基本功能进行排列组合而产生非常多的功能时,采用继承关系很难实现,而采用装饰模式却很好实现.
+>- 当对象的功能要求可以动态地添加,也可以再动态地撤销时  
+
+装饰模式在Java语言中的最著名的应用莫过于Java I/O标准库的设计了.
 
 ## 行为型模式
 
