@@ -1,4 +1,4 @@
-package com.xsm.design.pattern;
+package com.xsm.design.pattern.adapter;
 
 /**
  * @author xsm
