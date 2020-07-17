@@ -27,7 +27,7 @@ GOF23种设计模式的学习, 实践
   - [模板方法模式](#模板方法模式)
   - [命令模式]()
   - [状态模式]()
-  - [中介者模式]()
+  - [中介者模式](#中介者模式)
   - [迭代器模式]()
   - [访问者模式]()
   - [备忘录模式]()
@@ -1044,6 +1044,161 @@ public class RandomLoadBalanceImpl extends BaseLoadBalance {
 }
 ```
 ---
+
+### 中介者模式
+##### 1. 模式的定义与特点
+定义:  
+定义一个中介对象来封装一系列对象之间的交互,使原有对象之间的耦合松散,且可以独立地改变它们之间的交互.中介者模式又叫调停模式,是迪米特法则的典型应用
+
+优点:
+- 降低了对象之间的耦合性, 使得对象易于独立地被复用
+- 将对象间的一对多关联转变为一对一的关联, 提供系统的灵活性, 使得系统易于维护和扩展
+
+缺点:
+- 当类太多时, 中介者得职责将很大, 它会变得复杂而庞大, 以至于系统难以维护
+
+##### 2. 模式的结构与实现
+- 结构
+> - 抽象中介者: 它是中介者的接口, 提供了同事对象注册与转发同事对象信息的抽象方法
+> - 具体中介者: 实现中介者接口, 定义一个List来管理同事对象,
+>   协调各个同事角色之间的交互关系, 因此它依赖于同事角色
+> - 抽象同事类: 定义同事类的接口, 保存中介者对象, 提供同事对象交互的抽象方法,
+>   实现所有相互影响的同事类的公共功能.
+> - 具体同事类: 是抽象同事类的实现者, 当需要与其他同事对象交互时,
+>   由中介者对象负责后续的交互
+
+- 实现
+
+![中介者模式结构图](doc/design-pattern-picture/中介者模式结构图.png)
+```java
+package mediator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * @author xsm
+ * @date 2020/07/17
+ * @description 中介者模式
+ */
+public class MediatorPattern {
+
+    public static void main(String[] args) {
+        Mediator md = new ConcreteMediator();
+        Colleague c1, c2;
+        c1 = new ConcreteColleague1();
+        c2 = new ConcreteColleague2();
+        md.register(c1);
+        md.register(c2);
+        c1.send();
+        System.out.println("-------------");
+        c2.send();
+    }
+
+}
+
+/**
+ * 抽象中介者
+ */
+abstract class Mediator {
+
+    /**
+     * 注册
+     */
+    public abstract void register(Colleague colleague);
+
+    /**
+     * 转发
+     *
+     * @param colleague
+     */
+    public abstract void relay(Colleague colleague);
+}
+
+/**
+ * 具体中介者
+ */
+class ConcreteMediator extends Mediator {
+
+    private List<Colleague> colleagues = new ArrayList<>();
+
+    @Override
+    public void register(Colleague colleague) {
+        if (!colleagues.contains(colleague)) {
+            colleagues.add(colleague);
+            colleague.setMediator(this);
+        }
+    }
+
+    @Override
+    public void relay(Colleague colleague) {
+        for (Colleague ob : colleagues) {
+            if (!Objects.equals(ob, colleague)) {
+                ob.receive();
+            }
+        }
+    }
+}
+
+/**
+ * 抽象同事类
+ */
+abstract class Colleague {
+
+    public void setMediator(Mediator mediator) {
+        this.mediator = mediator;
+    }
+
+    protected Mediator mediator;
+
+
+    public abstract void receive();
+
+    public abstract void send();
+}
+
+/**
+ * 具体同事类
+ */
+class ConcreteColleague1 extends Colleague {
+
+    @Override
+    public void receive() {
+        System.out.println("具体同事类1收到请求");
+    }
+
+    @Override
+    public void send() {
+        System.out.println("具体同事类1发出请求");
+        // 请中介者转发
+        mediator.relay(this);
+    }
+}
+
+/**
+ * 具体同事类
+ */
+class ConcreteColleague2 extends Colleague {
+
+    @Override
+    public void receive() {
+        System.out.println("具体同事类2收到请求");
+    }
+
+    @Override
+    public void send() {
+        System.out.println("具体同事类2发出请求");
+        // 请中介者转发
+        mediator.relay(this);
+    }
+}
+```
+
+- 模式的应用场景
+> - 当对象之间存在复杂的网状结构关系而导致依赖关系混乱且难以复用时
+> - 当想创建一个运行于多个类之间的对象, 又不想生成新的子类时
+
 
 ## 23种设计模式总结
 
